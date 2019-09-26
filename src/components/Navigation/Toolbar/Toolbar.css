@@ -1,0 +1,38 @@
+.Toolbar {
+  width: 100%;
+  height: 60px;
+  display: flex;
+  /* for the elemnts to sit next to each other because the
+   default directional flexbox is row*/
+  justify-content: space-between;
+  /* flexbox has this justify-content property for how the elements
+   should be spread out and here we use space-between to
+   automatically keep some disctance from each other*/
+  align-items: center;
+  /* this determines how the items should be aligned vertically*/
+  padding: 0 20px;
+  box-sizing: border-box;
+  /* border-box to make sure that the toolbar is sized correctly
+   even with the padding*/
+  position: fixed;
+  top: 0;
+  left: 0;
+  /*for the div to stay on the top*/
+  background-color: #822139;
+  z-index: 100;
+  color: white;
+}
+
+.Toolbar nav {
+  height: 100%;
+}
+/* here we want to control how the nav item is displayed
+when nested inside a toolbar, so we want to make the nav
+height relevant to the toolbar height to make sure the nav
+items span the full height of this toolbar  */
+
+@media(max-width: 609px){
+  .DesktopOnly{
+    display:none;
+  }
+}

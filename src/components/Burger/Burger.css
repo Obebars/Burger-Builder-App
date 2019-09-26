@@ -1,0 +1,40 @@
+.Burger{
+  width:50%;
+  margin:auto;
+  height:300px;
+  overflow: auto;
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.2rem;
+  };
+  /* the overflow is set  to scroll so even if we build a bigger burger then
+  250px we can simply scroll it and we don't have it overlap or cut off
+  because we do limit the height here. If we wouldn't limit the height and
+  we build a very big burger it would somehow take up the entire page or
+  more than that and that wouldn't look great*/
+
+  /* rem is simply a unit in case you don't know which scales it based on the
+  default font-size the user selected*/
+
+
+/* The above is mostly the mobile layout, the below is to fit almost
+any device the burger is displayed on*/
+
+@media(min-width: 500px) and (min-height: 400px) {
+  .Burger{
+    width: 350px;
+    height:300px
+  };
+};
+@media(min-width: 500px) and (min-height: 401px) {
+  .Burger{
+    width: 450px;
+    height:400px
+  };
+};
+@media(min-width: 2000px) and (min-height: 700px) {
+  .Burger{
+    width: 30%;
+    height:40%;
+  };
+};

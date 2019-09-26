@@ -1,0 +1,13 @@
+.Logo{
+  height: 100%;
+  background-color: transparent;
+  border-radius: 5px;
+  box-sizing: border-box;
+  padding: 2px
+}
+
+.Logo img {
+  height: 100%
+}
+/* so that the image does take this heigh at a maximum and it does not
+take its default inherent height which would be higher*/
