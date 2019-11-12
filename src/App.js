@@ -1,13 +1,37 @@
 import React, { Component } from 'react';
+import { Route, Switch } from 'react-router-dom';
+
 import BurgerBuilder from './containers/BurgerBuilder/BurgerBuilder'
 import Layout from './hoc/Layout/Layout'
+import Checkout from './containers/Checkout/Checkout';
+
 
 class App extends Component {
+
+  /*state={
+    continue: false
+  }*/
+
+  /*state={
+    show: true
+  };
+  componentDidMount () {
+    setTimeout (() =>{
+      this.setState({show: false})
+    },5000)
+  }*/
   render(){
+      /*let checkout =null;
+    if (this.state.continue){
+      checkout= <Checkout/>
+    }*/
   return (
     <div >
     <Layout>
-      <BurgerBuilder/>
+      <Switch>
+        <Route path='/checkout' component={Checkout}/>
+        <Route path='/' exact component={BurgerBuilder}/>
+      </Switch>
     </Layout>
 
     </div>

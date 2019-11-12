@@ -1,9 +1,13 @@
 import React, { Component } from 'react';
+
 import Aux from '../../hoc/Auxilliary/Auxilliary';
 import Burger from '../../components/Burger/Burger';
 import BuildControls from '../../components/Burger/BuildControls/BuildControls';
 import Modal from '../../components/UI/Modal/Modal';
 import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary'
+import Spinner from '../../components/UI/Spinner/Spinner';
+import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
+import axios from '../../axios-orders'
 
 const INGREDIENT_PRICE ={
   salad:0.3,
@@ -17,17 +21,25 @@ constants in all capital characters*/
 class BurgerBuilder extends Component {
 
   state={
-    ingredients:{
-        salad:0,
-        cheese: 0,
-        bacon: 0,
-        meat:0
-    },
-    // P.S. we can't create an array to render from a negative value (ex: -1)
+    ingredients: null,
     totalPrice: 5,
     purchased: false,
     ordered: false,
+    loading: false,
+    error: false
   };
+
+  componentDidMount () {
+    axios.get('https://burger-builder-app-3bde6.firebaseio.com/ingredients.json')
+    .then( response =>{
+       this.setState({ingredients: response.data})
+    } )
+    .catch(error =>{
+      this.setState({error: error})
+    } )
+  };
+  /* here we added the catch method to prevent the then block from
+    getting executed in case the app throws an error*/
 
   purchasedHandler=(ingredients)=>{
     const purchasedItems = Object.keys(ingredients)
@@ -94,13 +106,26 @@ class BurgerBuilder extends Component {
   };
 
   orderContinueHandler = () =>{
-    alert('Happy Meal! Your order checkout page is loading...')
+    //alert('Happy Meal! Your order checkout page is loading...')
+    const queryParams = [];
+    for (let i in this.state.ingredients){
+      queryParams.push(encodeURIComponent(i) + '=' + encodeURIComponent(this.state.ingredients[i]));
+    }
+    queryParams.push('price=' + this.state.totalPrice);
+    const queryString = queryParams.join('&');
+    this.props.history.push({
+    pathname:'/checkout/',
+    search: '?' + queryString
+    });
+
   };
+
 
   render() {
     let disabled = {
-      ...this.state.ingredients
-    }
+          ...this.state.ingredients
+        }
+
     let key;
     for (key in disabled){
       disabled[key] = disabled[key] <= 0
@@ -109,28 +134,46 @@ class BurgerBuilder extends Component {
     so here we need to access the information of a given type and we
     will do so in the buildcontrols component where we have access
     to the above ingredients*/
+    let burger = this.state.error ? <p style={{textAlign:'center'}}>
+                  Ingredients can't be loaded </p> : <Spinner/>;
+    let orderSummary = null;
+
+    if(this.state.ingredients) {
+      burger = (
+              <Aux>
+                <Burger ingredients={this.state.ingredients}/>
+                <BuildControls
+                  ingredientAdded={this.addIngredientHandler}
+                  ingredientRemoved={this.removeIngredientHandler}
+                  disabledItem ={disabled}
+                  price={this.state.totalPrice}
+                  purchased={this.state.purchased}
+                  ordered={this.orderedHandler}/>
+              </Aux>
+            );
+      orderSummary =   <OrderSummary
+          ingredients={this.state.ingredients}
+          price={this.state.totalPrice}
+          orderCancelled={this.orderCancelHandler}
+          orderContinued={this.orderContinueHandler}/>
+    };
+
+    if (this.state.loading){
+      orderSummary = <Spinner/>
+    };
+
     return(
       <Aux>
         <Modal  show={this.state.ordered}
                 modalClosed={this.orderCancelHandler}>
-          <OrderSummary
-                ingredients={this.state.ingredients}
-                price={this.state.totalPrice}
-                orderCancelled={this.orderCancelHandler}
-                orderContinued={this.orderContinueHandler}/>
+                {orderSummary}
         </Modal>
-        <Burger ingredients={this.state.ingredients}/>
-        <BuildControls
-          ingredientAdded={this.addIngredientHandler}
-          ingredientRemoved={this.removeIngredientHandler}
-          disabledItem ={disabled}
-          price={this.state.totalPrice}
-          purchased={this.state.purchased}
-          ordered={this.orderedHandler}/>
+        {burger}
+
       </Aux>
     );
   };
 
 };
 
-export default BurgerBuilder;
+export default withErrorHandler (BurgerBuilder, axios);
